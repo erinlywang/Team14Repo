@@ -32,18 +32,18 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   depth = state.z;
   depth_error = depth_des - depth;
   uV_unbound = Kp * depth_error;
-  // upper_bound = 200;
-  // lower_bound = -200;
-  // if (uV_unbound < lower_bound) {
-  //   uV = lower_bound;
+  upper_bound = 200;
+  lower_bound = -200;
+  if (uV_unbound < lower_bound) {
+     uV = lower_bound;
 
-  // }
-  // else if (uV_unbound > upper_bound) {
-  //   uV = upper_bound;
-  // }
-  // else {
-  //   uV = uV_unbound;
-  // }
+   }
+   else if (uV_unbound > upper_bound) {
+     uV = upper_bound;
+   }
+   else {
+     uV = uV_unbound;
+   }
 
   //////////////////////////////////////////////////////////////////////
   
