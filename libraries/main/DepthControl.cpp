@@ -29,7 +29,7 @@ void DepthControl::dive(z_state_t * state, int currentTime_in) {
   
   //////////////////////////////////////////////////////////////////////
   depth_des = wayPoints[currentWayPoint];
-  depth = state.z;
+  depth = state->z;
   depth_error = depth_des - depth;
   uV_unbound = Kp * depth_error;
   upper_bound = 200;
