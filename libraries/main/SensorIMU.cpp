@@ -81,6 +81,7 @@ String SensorIMU::printRollPitchHeading(void) {
   printString += "[deg]";
 
   //modified code starts here
+  printString += " magX: ";
   printString += String(state.magX); // print the X magnetometer value
   printString += "[uT]"; // units of microTeslas
   //modified code ends here
