@@ -7,8 +7,6 @@ Authors:
     Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)                    
 */
 
-// this change is irrelevant
-
 #include <Arduino.h>
 #include <Wire.h>
 #include <avr/io.h>
