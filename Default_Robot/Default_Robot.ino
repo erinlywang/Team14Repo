@@ -54,10 +54,12 @@ int currentTime;
 int current_way_point = 0;
 volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 
-// GPS Waypoints
-const int number_of_waypoints = 2;
-const int waypoint_dimensions = 2;       // waypoints are set to have two pieces of information, x then y.
-double waypoints [] = { 0, 10, 0, 0 };   // listed as x0,y0,x1,y1, ... etc.
+// Depth Waypoints
+  int diveDelay = 10000; // how long robot will stay at depth waypoint before continuing (ms)
+
+  const int num_depth_waypoints = 5;
+  double depth_waypoints [] = { 0.5, 0.75, 1, 1.25, 1.5 };  // listed as z0,z1,... etc.
+  depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
 
 ////////////////////////* Setup *////////////////////////////////
 
