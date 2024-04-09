@@ -7,7 +7,6 @@ Authors:
     Apoorva Sharma (asharma@hmc.edu) '17 (contributed in 2016)                    
 */
 
-// Hello!
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -19,13 +18,14 @@ Authors:
 #include <SensorGPS.h>
 #include <SensorIMU.h>
 #include <XYStateEstimator.h>
+#include <ZStateEstimator.h>
 #include <ADCSampler.h>
 #include <ErrorFlagSampler.h>
 #include <ButtonSampler.h> // A template of a data source library
 #include <MotorDriver.h>
 #include <Logger.h>
 #include <Printer.h>
-#include <SurfaceControl.h>
+#include <DepthControl.h>
 #define UartSerial Serial1
 #define DELAY 0
 #include <GPSLockLED.h>
@@ -35,6 +35,7 @@ Authors:
 
 MotorDriver motor_driver;
 XYStateEstimator state_estimator;
+ZStateEstimator z_state_estimator;
 SurfaceControl surface_control;
 SensorGPS gps;
 Adafruit_GPS GPS(&UartSerial);
@@ -114,12 +115,13 @@ void loop() {
     printer.printValue(1,ef.printStates());
     printer.printValue(2,logger.printState());
     printer.printValue(3,gps.printState());   
-    printer.printValue(4,state_estimator.printState());     
-    printer.printValue(5,surface_control.printWaypointUpdate());
-    printer.printValue(6,surface_control.printString());
-    printer.printValue(7,motor_driver.printState());
-    printer.printValue(8,imu.printRollPitchHeading());        
-    printer.printValue(9,imu.printAccels());
+    printer.printValue(4,xy_state_estimator.printState());     
+    printer.printValue(5,z_state_estimator.printState());     
+    printer.printValue(6,depth_control.printWaypointUpdate());
+    printer.printValue(7,depth_control.printString());
+    printer.printValue(8,motor_driver.printState());
+    printer.printValue(9,imu.printRollPitchHeading());        
+    printer.printValue(10,imu.printAccels());
     printer.printToSerial();  // To stop printing, just comment this line out
   }
 
@@ -162,9 +164,14 @@ void loop() {
  
   gps.read(&GPS); // blocking UART calls, need to check for UART every cycle
 
-  if ( currentTime-state_estimator.lastExecutionTime > LOOP_PERIOD ) {
-    state_estimator.lastExecutionTime = currentTime;
-    state_estimator.updateState(&imu.state, &gps.state);
+  if ( currentTime-xy_state_estimator.lastExecutionTime > LOOP_PERIOD ) {
+    xy_state_estimator.lastExecutionTime = currentTime;
+    xy_state_estimator.updateState(&imu.state, &gps.state);
+  }
+
+  if ( currentTime-z_state_estimator.lastExecutionTime > LOOP_PERIOD ) {
+    z_state_estimator.lastExecutionTime = currentTime;
+    z_state_estimator.updateState(analogRead(PRESSURE_PIN));
   }
   
   if ( currentTime-led.lastExecutionTime > LOOP_PERIOD ) {

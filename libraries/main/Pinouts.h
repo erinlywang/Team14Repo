@@ -41,4 +41,15 @@
 // Depth Control
 #define PRESSURE_PIN 14 // Teensy pin A00
 
+// Thermistor
+#define THERMISTOR_PIN 15 // Teensy pin A01
+
+// First Transimpedance + Min/Max
+#define MIN1_PIN 16 // Teensy pin A02
+#define MAX1_PIN 17 // Teensy pin A03
+
+// First Transimpedance + Min/Max
+#define MIN1_PIN 35 // Teensy pin A00
+#define MAX1_PIN 36 // Teensy pin A00
+
 #endif
