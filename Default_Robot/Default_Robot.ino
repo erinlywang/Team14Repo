@@ -36,7 +36,7 @@ Authors:
 MotorDriver motor_driver;
 XYStateEstimator state_estimator;
 ZStateEstimator z_state_estimator;
-SurfaceControl surface_control;
+// SurfaceControl surface_control;
 SensorGPS gps;
 Adafruit_GPS GPS(&UartSerial);
 ADCSampler adc;
@@ -64,7 +64,7 @@ volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-  
+  delay(1000);
   logger.include(&imu);
   logger.include(&gps);
   logger.include(&state_estimator);
@@ -127,10 +127,29 @@ void loop() {
     printer.printToSerial();  // To stop printing, just comment this line out
   }
 
-  if ( currentTime-surface_control.lastExecutionTime > LOOP_PERIOD ) {
-    surface_control.lastExecutionTime = currentTime;
-    surface_control.navigate(&state_estimator.state, &gps.state, DELAY);
-    motor_driver.drive(surface_control.uL,surface_control.uR,0);
+  /* ROBOT CONTROL Finite State Machine */
+  if ( currentTime-depth_control.lastExecutionTime > LOOP_PERIOD ) {
+    depth_control.lastExecutionTime = currentTime;
+    if ( depth_control.diveState ) {      // DIVE STATE //
+      depth_control.complete = false;
+      if ( !depth_control.atDepth ) {
+        depth_control.dive(&z_state_estimator.state, currentTime);
+      }
+      else {
+        depth_control.diveState = false; 
+        depth_control.surfaceState = true;
+      }
+      motor_driver.drive(0,0,depth_control.uV);
+    }
+    if ( depth_control.surfaceState ) {     // SURFACE STATE //
+      if ( !depth_control.atSurface ) { 
+        depth_control.surface(&z_state_estimator.state);
+      }
+      else if ( depth_control.complete ) { 
+        delete[] depth_control.wayPoints;   // destroy depth waypoint array from the Heap
+      }
+      motor_driver.drive(0,0,depth_control.uV);
+    }
   }
 
   if ( currentTime-adc.lastExecutionTime > LOOP_PERIOD ) {

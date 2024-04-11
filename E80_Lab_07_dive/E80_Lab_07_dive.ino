@@ -53,7 +53,7 @@ volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-  
+  delay(1);
   logger.include(&imu);
   logger.include(&gps);
   logger.include(&xy_state_estimator);
@@ -76,8 +76,8 @@ void setup() {
 
   int diveDelay = 3000; // how long robot will stay at depth waypoint before continuing (ms)
 
-  const int num_depth_waypoints = 2;
-  double depth_waypoints [] = { 0.5, 1 };  // listed as z0,z1,... etc.
+  const int num_depth_waypoints = 1;
+  double depth_waypoints [] = { 0.1, 0.3 };  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -112,11 +112,13 @@ void loop() {
     printer.printValue(3,gps.printState());   
     printer.printValue(4,xy_state_estimator.printState());  
     printer.printValue(5,z_state_estimator.printState());  
-    printer.printValue(6,depth_control.printWaypointUpdate());
-    printer.printValue(7,depth_control.printString());
-    printer.printValue(8,motor_driver.printState());
-    printer.printValue(9,imu.printRollPitchHeading());        
-    printer.printValue(10,imu.printAccels());
+    printer.printValue(6,depth_control.printString());
+    printer.printValue(7, (3.3/1023)*analogRead(PRESSURE_PIN));
+    printer.printValue(8, (3.3/1023)*analogRead(MIN1_PIN));
+    printer.printValue(9, (3.3/1023)*analogRead(MAX1_PIN));
+    printer.printValue(10, (3.3/1023)*analogRead(MIN2_PIN));
+    printer.printValue(11, (3.3/1023)*analogRead(MAX2_PIN));
+    printer.printValue(12, (3.3/1023)*analogRead(THERMISTOR_PIN));
     printer.printToSerial();  // To stop printing, just comment this line out
   }
 

@@ -49,7 +49,7 @@
 #define MAX1_PIN 17 // Teensy pin A03
 
 // First Transimpedance + Min/Max
-#define MIN1_PIN 35 // Teensy pin A00
-#define MAX1_PIN 36 // Teensy pin A00
+#define MIN2_PIN 35 // Teensy pin A11
+#define MAX2_PIN 36 // Teensy pin A12
 
 #endif
