@@ -53,7 +53,7 @@ volatile bool EF_States[NUM_FLAGS] = {1,1,1};
 ////////////////////////* Setup *////////////////////////////////
 
 void setup() {
-  delay(1);
+  delay(5000);
   logger.include(&imu);
   logger.include(&gps);
   logger.include(&xy_state_estimator);
@@ -76,8 +76,8 @@ void setup() {
 
   int diveDelay = 3000; // how long robot will stay at depth waypoint before continuing (ms)
 
-  const int num_depth_waypoints = 1;
-  double depth_waypoints [] = { 0.1, 0.3 };  // listed as z0,z1,... etc.
+  const int num_depth_waypoints = 3;
+  double depth_waypoints [] = {  0.25, 0.5, 0.75};  // listed as z0,z1,... etc.
   depth_control.init(num_depth_waypoints, depth_waypoints, diveDelay);
   
   xy_state_estimator.init(); 
@@ -134,7 +134,7 @@ void loop() {
         depth_control.diveState = false; 
         depth_control.surfaceState = true;
       }
-      motor_driver.drive(0,0,depth_control.uV);
+      motor_driver.drive(0,depth_control.uV,depth_control.uV);
     }
     if ( depth_control.surfaceState ) {     // SURFACE STATE //
       if ( !depth_control.atSurface ) { 
@@ -143,7 +143,7 @@ void loop() {
       else if ( depth_control.complete ) { 
         delete[] depth_control.wayPoints;   // destroy depth waypoint array from the Heap
       }
-      motor_driver.drive(0,0,depth_control.uV);
+      motor_driver.drive(0,depth_control.uV,depth_control.uV);
     }
   }
   
